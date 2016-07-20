@@ -27,13 +27,9 @@ def partition(array, l, r)
 end
 
 def choose_pivot(array, l, r)
+  index = l + rand(r - l + 1)
+  array[l], array[index] = array[index], array[l]
   array[l]
-end
-
-def get_pivot_index(array, pivot_value)
-  array.each_with_index do |item, i|
-    return i if array[i] == pivot_value
-  end
 end
 
 def quicksort(array, l, r)
