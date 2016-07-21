@@ -33,3 +33,24 @@ def add(big_array)
   end
   merged
 end
+
+def multiply(x, y)
+  # get number of digits in x/y
+  n = x != 0 ? Math.log10(x).to_i + 1 : 1
+  if n > 1
+    half = 10**(n/2)
+    a = x/half
+    b = x%half
+    c = y/half
+    d = y%half
+    # without Gauss
+    # (half**2) * multiply(a, c) + half * (multiply(a, d) + multiply(b, c)) + multiply(b, d)
+    # with Gauss
+    ac = multiply(a, c)
+    bd = multiply(b, d)
+    abcd = multiply(a + b, c + d)
+    (half**2) * ac + half * (abcd - ac - bd) + bd
+  else
+    x * y
+  end
+end
