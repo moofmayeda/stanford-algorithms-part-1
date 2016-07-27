@@ -2,7 +2,6 @@ def choose_edge(graph)
   keys = graph.keys
   first_vertex = graph.keys[rand(graph.keys.count)]
   possibilities = graph[first_vertex]
-  num_of_possibilities = possibilities.count
   random_index = rand(possibilities.count)
   second_vertex = possibilities[random_index]
   [first_vertex, second_vertex]
