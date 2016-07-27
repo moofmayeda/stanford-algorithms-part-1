@@ -18,30 +18,26 @@ end
 def min_cut(graph)
   if graph.count > 2
     edge = choose_edge(graph)
-    puts edge.inspect
     contract(graph, edge)
-    puts "preliminary: " + graph.inspect
     min_cut(graph)
   else
-    puts graph.inspect
     graph.values.first.count
   end
 end
 
 def many_trials(t)
-  graph = {}
-  File.open('test.txt').each do |line|
-    array = line.split(" ").map(&:to_i)
-    graph[array.shift] = array
-  end
-  n = graph.count
+  n = `wc -l "kargerMinCut.txt"`.strip.split(' ')[0].to_i
   min = n * (n - 1) / 2
   t.times do
-    dup_graph = graph.dup
-    result = min_cut(dup_graph)
+    graph = {}
+    File.open('kargerMinCut.txt').each do |line|
+      array = line.split(" ").map(&:to_i)
+      graph[array.shift] = array
+    end
+    result = min_cut(graph)
     min = [result, min].min
   end
   min
 end
 
-many_trials(25)
+many_trials(1000) # 17
