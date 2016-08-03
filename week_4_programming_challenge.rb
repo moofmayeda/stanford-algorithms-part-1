@@ -8,12 +8,12 @@ end
 graph = {}
 reversed_graph = {}
 graph_array.each do |array|
-  if graph.keys.include? array[0]
+  if graph[array[0]]
     graph[array[0]][:data] << array[1]
   else
     graph[array[0]] = {data: array[1,1], explored: false, leader: nil, finishing: nil}
   end
-  if reversed_graph.keys.include? array[1]
+  if reversed_graph[array[1]]
     reversed_graph[array[1]][:data] << array[0]
   else
     reversed_graph[array[1]] = {data: array[0,1], explored: false, leader: nil, finishing: nil}
