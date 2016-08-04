@@ -1,7 +1,7 @@
-total_lines = `wc -l "SCC.txt"`.strip.split(' ')[0].to_f
+total_lines = `wc -l "example.txt"`.strip.split(' ')[0].to_f
 
 graph_array = []
-File.open('SCC.txt').each do |line|
+File.open('example.txt').each do |line|
   graph_array << line.split(" ").map(&:to_i)
   puts "#{$.}/#{total_lines} (#{$./total_lines * 100}%"
 end
@@ -20,30 +20,17 @@ graph_array.each do |array|
   end
 end
 
-(graph.keys - reversed_graph.keys).each do |key|
-  reversed_graph[key] = {data: [], explored: false, leader: nil, finishing: nil}
-end
-(reversed_graph.keys - graph.keys).each do |key|
-  graph[key] = {data: [], explored: false, leader: nil, finishing: nil}
-end
-
 def dfs_loop(graph)
   $t = 0
   $s = nil
   $new_order = $new_order || []
   if $new_order.empty?
     (graph.count).downto(1) do |i|
-      if !graph[i][:explored]
-        $s = i
-        dfs(graph, i)
-      end
+      explore_vertex(graph, i)
     end
   else
     $new_order.each do |i|
-      if !graph[i][:explored]
-        $s = i
-        dfs(graph, i)
-      end
+      explore_vertex(graph, i)
     end
   end
   counts_hash = Hash.new(0)
@@ -51,15 +38,57 @@ def dfs_loop(graph)
   counts_hash.sort_by{|k,v| v}.reverse
 end
 
-def dfs(graph, start_vertex)
-  graph[start_vertex][:explored] = true
-  graph[start_vertex][:leader] = $s
-  graph[start_vertex][:data].each do |j|
-    dfs(graph, j) if !graph[j][:explored]
+# turned into a while loop
+# def dfs(graph, start_vertex)
+#   graph[start_vertex][:explored] = true
+#   graph[start_vertex][:leader] = $s
+#   graph[start_vertex][:data].each do |j|
+#     add_vertex(graph, j)
+#     dfs(graph, j) if !graph[j][:explored]
+#   end
+#   $t += 1
+#   graph[start_vertex][:finishing] = $t
+#   $new_order.unshift(start_vertex)
+# end
+
+def explore_vertex(graph, i)
+  add_vertex(graph, i)
+  if !graph[i][:explored]
+    puts "*" * 50
+    puts "vertex #{i} is about to be explored"
+    $s = i
+    # dfs(graph, i)
+    stack = [i]
+    stack_index = 0
+    while !stack[stack_index].nil?
+      start_vertex = stack[stack_index]
+      # insert dfs functionality
+      add_vertex(graph, start_vertex)
+      graph[start_vertex][:explored] = true
+      graph[start_vertex][:leader] = $s
+      puts "vertex #{start_vertex} connected to #{graph[start_vertex][:data].inspect}"
+      graph[start_vertex][:data].each do |j|
+        add_vertex(graph, j)
+        stack << j if !graph[j][:explored]
+      end
+      # are all the descendents (not just the first layer) explored?
+      if stack.all? {|vertex| graph[vertex][:explored]}
+        $t += 1
+        graph[start_vertex][:finishing] = $t
+        $new_order.unshift(start_vertex)
+        puts "done exploring vertex #{start_vertex}, finishing order set to #{$t} and added to beginning of new_order"
+      else
+        stack << start_vertex
+      end
+      stack_index += 1
+    end
   end
-  $t += 1
-  graph[start_vertex][:finishing] = $t
-  $new_order.unshift(start_vertex)
+end
+
+def add_vertex(graph, i)
+  if graph[i].nil?
+    graph[i] = {data: [], explored: false, leader: nil, finishing: nil}
+  end
 end
 
 $new_order = nil
