@@ -4,11 +4,15 @@ def two_sum_long_way(filename)
     array << line.to_i
   end
   array.sort!
+  min_sum = array[0]+array[1]
+  max_sum = array[-2] + array[-1]
   counter = 0
   (-10000..10000).each do |t|
-    array.each do |x|
-      if x != (t-x)
-        counter += 1 if binary_search(array, t-x)
+    unless (t < min_sum) || (t > max_sum)
+      array.each do |x|
+        if x != (t-x)
+          counter += 1 if binary_search(array, t-x)
+        end
       end
     end
   end
